@@ -216,3 +216,16 @@ tbody {
     position: relative !important;
     top: 28px !important;
 }
+
+
+.result{
+    font: 700 22px Roboto;
+    color: rgba(255, 255, 255, 1);
+    text-shadow: 0 0 3px #FF0000, 0 0 5px #0000FF;
+    position: absolute;
+    padding: 40px 30px 40px 30px;
+    top: 35%;
+    background-color: #846c63;
+    left: 33%;
+    box-shadow: 0 0 20px 4px #846c63;
+}

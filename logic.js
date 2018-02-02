@@ -1,66 +1,17 @@
-const AccesabilityIdentifiers  = {
-    constant: "constant",
-    symbol: "symbol",
-    negation: "negation",
-    conjunction: "conjunction",
-    disjunction: "disjunction",
-    implication: "implication",
-    equivalence: "equivalence",
-    openingBracket: "opening bracket",
-    closingBracket: "closing bracket",
-    binaryConnective: "binary connective",
-    atom: "atom",
-    unaryComplexFormula: "unary complex formula",
-    binaryComplexFormula: "binary complex formula",
-    formula: "formula"
-};
+let stringToCheck;
+let tests = [
+    '(((A&B)&C)|(((!A)&C)&C))',
+    '((A~(C~D)~B))',
+    '(((A~B)~C)~D)',
+    '(A->B)~(!(C))',
+    '(A&B)->(!C)',
+];
 
-class Alphabet {
-    constructor() {
-        this.constant = "1 | 0";
-        this.symbol = "A | B | C | D | E | F | G | K | L | M | N | O | P | Q | R | S | T | U | V | W | X | Y | Z";
-        this.negation = "!";
-        this.conjunction = "&";
-        this.disjunction = "|";
-        this.implication = "->";
-        this.equivalence = "~";
-        this.openingBracket = "(";
-        this.closingBracket = ")";
-        this.binaryConnective = this.implication + " | " + this.conjunction + " | " +
-            this.disjunction + " | " + this.equivalence;
-    }
-}
 
-class Syntax {
-    constructor() {
-        this.alphabet = new Alphabet();
-        this.atom = this.alphabet.symbol;
-        this.formula = this.alphabet.constant + " | " + this.atom + " | " + this.unaryComplexFormula +
-            " | " + this.binaryComplexFormula;
-        this.unaryComplexFormula = this.alphabet.openingBracket + " | " + this.alphabet.negation +
-            " | " + this.formula + " | " + this.alphabet.closingBracket;
-        this.binaryComplexFormula = this.alphabet.openingBracket + " | " + this.formula +
-            " | " + this.alphabet.binaryConnective + " | " + this.formula + " | " + this.alphabet.closingBracket;
-    }
-}
-
-class Language {
-    constructor(syntax, alphabet) {
-        this.alphabet = alphabet;
-        this.syntax = syntax
-    }
-}
-
-let regExpFormulaText = '[(]+(![(]|[(])*[A-Z]+([&|~]|->){1}[A-Z]+[)]*[)]+';
-let regExpFormula = new RegExp(regExpFormulaText, 'g');
-
+let mark = 4;
 
 function analiseFormula(gotAnswer) {
-    let formula = document.getElementById("formula");
-    let text = formula.value;
-
-    let answer = text.match(regExpFormula);
-    let expectedAnswer = answer !== null;
+    let expectedAnswer = validateFormula();
     let outputText = expectedAnswer === true ? 'is formula' : 'is not formula';
     let resultAnswer = expectedAnswer === gotAnswer;
     fillTable(resultAnswer, outputText)
@@ -88,5 +39,54 @@ function fillTable(answer, output){
         tBody.appendChild(row);
 
     }
+    //showMark();
 
+}
+
+function parseFormula(){
+    let isCorrect = false;
+    let simplifier = "A";
+    stringToCheck = stringToCheck.replace(/\(!\D\)/g,simplifier);
+    let binaryFormulaRegExp = /\(\D[→~&|]\D\)/g;
+    let oldString = stringToCheck;
+    while(true){
+        stringToCheck = stringToCheck.replace(binaryFormulaRegExp, simplifier);
+        if(stringToCheck === simplifier)
+            return true;
+        if (oldString === stringToCheck) {
+            return false
+        }
+        oldString = stringToCheck;
+    }
+    //   1. (((A&B)&C)|(((!A)&C)&C))
+    //   2. (((A&B)&C)|((A&C)&C))
+    //   3. ((A&C)|(A&C))
+    //   4. (A|A)
+    //   5.  A
+}
+
+function validateFormula(){
+    stringToCheck = document.getElementById("formula").value.replace(/->/g,"→");
+    if(checkBrackets())
+        return parseFormula();
+    return false;
+}
+
+function checkBrackets() {
+    let opBr = 0;
+    let clBr = 0;
+    for (let i = 0 ; i < stringToCheck.length ; i++)
+    {
+        if(stringToCheck[i]==="(") opBr++;
+        if(stringToCheck[i]===")") clBr++;
+    }
+    return opBr === clBr;
+}
+
+
+function showMark() {
+    let finish = document.createElement('div');
+    finish.className = 'result flow-text';
+    finish.innerHTML = 'You correctly completed ' + ((mark/tests.length)*100).toFixed(1) + '% tasks ';
+    document.getElementById('content').appendChild(finish);
 }
