@@ -176,6 +176,8 @@ input:-webkit-autofill {
 td, th {
     text-align: center !important;
     font: 700 22px Roboto;
+    width: 250px;
+
 }
 
 table.bordered > tbody > tr {
@@ -206,4 +208,11 @@ table.bordered > tbody > tr {
 
 th {
     width: 250px;
+}
+
+tbody {
+    overflow: scroll;
+    height: 100px;
+    position: relative !important;
+    top: 28px !important;
 }

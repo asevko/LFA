@@ -51,8 +51,22 @@ class Language {
     }
 }
 
+let regExpFormulaText = '[(]+(![(]|[(])*[A-Z]+([&|~]|->){1}[A-Z]+[)]*[)]+';
+let regExpFormula = new RegExp(regExpFormulaText, 'g');
 
-function fillTable(answer,answerTxt){
+
+function analiseFormula(gotAnswer) {
+    let formula = document.getElementById("formula");
+    let text = formula.value;
+
+    let answer = text.match(regExpFormula);
+    let expectedAnswer = answer !== null;
+    let outputText = expectedAnswer === true ? 'is formula' : 'is not formula';
+    let resultAnswer = expectedAnswer === gotAnswer;
+    fillTable(resultAnswer, outputText)
+}
+
+function fillTable(answer, output){
     let tBody = document.getElementById("bodyt");
     let formula = document.getElementById("formula");
     let text = formula.value;
@@ -67,7 +81,7 @@ function fillTable(answer,answerTxt){
         let answerTd = document.createElement('td');
         let shadowColor = answer === false ? '#FF0000' : '#00FF00';
         answerTd.style.textShadow = '0 0 7px ' + shadowColor +', 0 0 7px ' +shadowColor;
-        let answerText = document.createTextNode(answerTxt);
+        let answerText = document.createTextNode(output);
         answerTd.appendChild(answerText);
         row.appendChild(answerTd);
 
