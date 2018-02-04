@@ -2,14 +2,17 @@ let stringToCheck;
 const amountOfTests = 10;
 let currentTest = amountOfTests;
 let mark = amountOfTests;
+let autoTesting = true;
 
 function analiseFormula(gotAnswer) {
     let expectedAnswer = validateFormula();
     let outputText = expectedAnswer === true ? 'is formula' : 'is not formula';
     let resultAnswer = expectedAnswer === gotAnswer;
     if (!resultAnswer) {
-        let audio = new Audio('the-simpsons-nelsons-haha.mp3');
-        audio.play();
+        if (soundEnabled) {
+            let audio = new Audio('the-simpsons-nelsons-haha.mp3');
+            audio.play();
+        }
         mark--;
     }
     fillTable(resultAnswer, outputText)
@@ -37,10 +40,10 @@ function fillTable(answer, output){
         tBody.appendChild(row);
 
     }
-    if (currentTest > 0){
+    if (currentTest > 0 && autoTesting){
         generateFormula();
         currentTest--;
-    } else  {
+    } else if (currentTest === 0){
         stringToCheck = document.getElementById("formula").value = "";
         showMark();
     }
@@ -48,6 +51,7 @@ function fillTable(answer, output){
 
 function parseFormula(){
     let simplifier = "A";
+    if (stringToCheck === simplifier) return false;
     let binaryFormulaRegExp = /\(\D[→~&|]\D\)/g;
     let oldString = stringToCheck;
     while(true){
@@ -89,8 +93,13 @@ function checkBrackets() {
 function showMark() {
     let finish = document.createElement('div');
     finish.className = 'result flow-text';
+    finish.id = 'mark';
     finish.innerHTML = 'You correctly completed ' + ((mark/amountOfTests)*100).toFixed(1) + '% tasks ';
     document.getElementById('content').appendChild(finish);
+    let correct = document.getElementById('correct');
+    correct.disabled = true;
+    let incorrect = document.getElementById('incorrect');
+    incorrect.disabled = true;
 }
 
 
@@ -134,4 +143,35 @@ function rand(min, max) {
     min = Math.ceil(min);
     max = Math.floor(max);
     return Math.floor(Math.random() * (max - min)) + min;
+}
+
+
+let soundEnabled = true;
+
+function soundLogic() {
+    let soundIcon = document.getElementById('sound');
+    soundEnabled = !soundEnabled;
+    soundIcon.src = soundEnabled ? 'img/sound_on.png': 'img/sound_off.png';
+}
+
+function beginTests() {
+    uiSetUp();
+    autoTesting = true;
+    generateFormula();
+    currentTest--;
+}
+
+
+function uiSetUp() {
+    let correct = document.getElementById('correct');
+    correct.disabled = false;
+    let incorrect = document.getElementById('incorrect');
+    incorrect.disabled = false;
+    currentTest = amountOfTests;
+    mark = amountOfTests;
+    let tBody = document.getElementById("bodyt");
+    tBody.innerHTML = "";
+    document.getElementById("formula").value = "";
+    $('#mark').remove();
+    autoTesting = false
 }

@@ -229,3 +229,21 @@ tbody {
     left: 33%;
     box-shadow: 0 0 20px 4px #846c63;
 }
+
+#sound {
+    position: absolute;
+    bottom: -15px;
+    left: 91%;
+}
+
+#tests {
+    position: absolute;
+    top: 75%;
+    left: 5%;
+}
+
+#self {
+    position: absolute;
+    top: 75%;
+    left: 55%;
+}
