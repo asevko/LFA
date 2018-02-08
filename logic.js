@@ -49,9 +49,11 @@ function fillTable(answer, output){
     }
 }
 
-function parseFormula(){
+function checkFormula(){
     let simplifier = "A";
-    if (stringToCheck === simplifier) return false;
+    if (stringToCheck === simplifier ||
+        stringToCheck.replace(/[A-Z]/, simplifier).match(simplifier))
+        return true;
     let binaryFormulaRegExp = /\(\D[→~&|]\D\)/g;
     let oldString = stringToCheck;
     while(true){
@@ -64,17 +66,12 @@ function parseFormula(){
         }
         oldString = stringToCheck;
     }
-    //   1. (((A&B)&C)|(((!A)&C)&C))
-    //   2. (((A&B)&C)|((A&C)&C))
-    //   3. ((A&C)|(A&C))
-    //   4. (A|A)
-    //   5.  A
 }
 
 function validateFormula(){
     stringToCheck = document.getElementById("formula").value.replace(/->/g,"→");
     if(checkBrackets())
-        return parseFormula();
+        return checkFormula();
     return false;
 }
 
@@ -119,14 +116,15 @@ function generateFormula() {
                 index = rand(0, formula.length);
             }while(!symbol.includes(formula[index]));
             formula = formula.substr(0,index) +
-                openingBracket + formula[index] + binaryOperation[rand(0,binaryOperation.length)] + symbol[rand(0,symbol.length)] + closingBracket +
-                formula.substr(index+1, formula.length);
+                openingBracket + formula[index] + binaryOperation[rand(0,binaryOperation.length)] +
+                symbol[rand(0,symbol.length)] + closingBracket + formula.substr(index+1, formula.length);
         }
         else {
             do {
                 index = rand(0, formula.length);
             }while(!symbol.includes(formula[index]));
-            formula = formula.substr(0,index) + openingBracket + negation +  formula[index]  + closingBracket + formula.substr(index+1, formula.length);
+            formula = formula.substr(0,index) + openingBracket + negation +  formula[index]  + closingBracket +
+                formula.substr(index+1, formula.length);
         }
     }
 
